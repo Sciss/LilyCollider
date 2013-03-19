@@ -12,7 +12,7 @@ On OS X, to be able to launch lilypond from the terminal (i.e. SuperCollider), t
 
 If not on `$PATH`, instead you can set `LilyShowableObj.lilyCmd`
 
-Furthermore, the classes expect to find the templates in `Platform.userExtensionDir ++ "/LilyCollider/templates"`. If this does not apply to your installation, make sure to configure `LilyShowableObj.templatesFolder`. The default PDF viewer defaults to `open` which works on OS X. On Linux you may need to adjust `LilyShowableObj.pdfViewer`.
+Furthermore, the classes expect to find the templates in `Platform.userExtensionDir ++ "/LilyCollider/templates"`. If this does not apply to your installation, make sure to configure `LilyShowableObj.templatesFolder`. The PDF viewer defaults to `open` which works on OS X. On Linux you may need to adjust `LilyShowableObj.pdfViewer`.
 
 ## Rhythmic cells
 
