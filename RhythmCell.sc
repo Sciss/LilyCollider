@@ -2,7 +2,7 @@
 RhythmicCell : LilyRhythmObj {
 
 
-    var <>struct, <>lenght;
+    var <>struct, <>length;
     var <>template = "rhythmic";
 
 
@@ -14,7 +14,7 @@ RhythmicCell : LilyRhythmObj {
 
     initRhythmCell { arg thisCell;
 
-        this.lenght_(thisCell[0]);
+        this.length_(thisCell[0]);
         this.struct_(thisCell[1]);
     }
 
@@ -29,12 +29,17 @@ RhythmicCell : LilyRhythmObj {
     lyHeads {
 
         ^this.heads.collect({|i|
-
-            durationDict.findKeyForValue(i)
+			this.findKeyForValue(i)
         })
 
     }
 
+	findKeyForValue { arg i;
+		var isPause, key;
+		key = durationDict.findKeyForValue(i.abs);
+		isPause = i < 0;
+		^isPause.if({ "-" ++ key }, key);
+	}
 
     subHeads {
 
@@ -69,7 +74,7 @@ RhythmicCell : LilyRhythmObj {
             {|i|
                 case
                 {i.isKindOf(Number)}
-                {durationDict.findKeyForValue(i)}
+                {this.findKeyForValue(i)}
 
                 {i.isKindOf(Array)}
                 {i};
@@ -102,10 +107,10 @@ RhythmicCell : LilyRhythmObj {
         var thisFactor, adjustedSum;
 
         thisFactor = 1;
-        adjustedSum = this.heads.sum;
+		adjustedSum = this.heads.abs.sum;
 
         while(
-            { (adjustedSum) < (this.lenght * 8) },
+            { (adjustedSum) < (this.length * 8) },
             { adjustedSum = adjustedSum * 2; thisFactor = thisFactor * 2 }
         );
 
@@ -121,7 +126,7 @@ RhythmicCell : LilyRhythmObj {
 
     numer {
 
-        ^(this.adjustedHeads.sum / gcd((lenght * 8).asInteger, this.adjustedHeads.sum.asInteger))
+		^(this.adjustedHeads.abs.sum / gcd((length * 8).asInteger, this.adjustedHeads.abs.sum.asInteger))
 
     }
 
@@ -130,7 +135,7 @@ RhythmicCell : LilyRhythmObj {
 
         var thisDenom;
 
-        thisDenom = (lenght * 8) / gcd((lenght * 8).asInteger, this.adjustedHeads.sum.asInteger);
+        thisDenom = (length * 8) / gcd((length * 8).asInteger, this.adjustedHeads.abs.sum.asInteger);
 
         if(thisDenom < this.numer, {
             while({(thisDenom * 2) < this.numer}, {
@@ -165,7 +170,7 @@ RhythmicCell : LilyRhythmObj {
 
 
     simpleString { arg thisTree, thisLevel=1;
-
+		var str, isPause;
         var levelString = String.new;
         var stringOut = String.new;
 
@@ -179,7 +184,13 @@ RhythmicCell : LilyRhythmObj {
 
 
         thisTree.do { arg thisNumber;
-            stringOut = stringOut ++ "c'" ++ thisNumber.asString ++ "  "
+			str = thisNumber.asString;
+			isPause = str[0] == $-;
+			if (isPause) {
+				stringOut = stringOut ++ "r" ++ str.drop(1) ++ "  "
+			} {
+				stringOut = stringOut ++ "c'" ++ str ++ "  "
+			}
         };
 
 
@@ -194,7 +205,7 @@ RhythmicCell : LilyRhythmObj {
 
 
     noTimeSigString { arg thisLevel =1;
-
+		var isPause;
         var stringOut = String.new;
         var levelString = String.new;
 
@@ -211,10 +222,14 @@ RhythmicCell : LilyRhythmObj {
             });
 
             this.adjustedStruct.do {arg thisItem, thisIndex;
-
+				// ["adjustedStruct", thisIndex, thisItem].postcs;
                 case
                 {thisItem.isNumber}
-                {stringOut = stringOut ++ "c'" ++ durationDict.findKeyForValue(thisItem) ++ "  "}
+                {
+						isPause = thisItem < 0;
+						stringOut = stringOut ++ isPause.if("r", "c'") ++
+						  durationDict.findKeyForValue(thisItem.abs) ++ "  "
+				}
 
                 {thisItem.isArray}
                 {
@@ -240,7 +255,7 @@ RhythmicCell : LilyRhythmObj {
 
     string {
 
-        ^("\\time " ++ measureScaleLily[(this.lenght*2)-1].asString ++ "\n" ++ this.noTimeSigString ++ "\n")
+        ^("\\time " ++ measureScaleLily[(this.length*2)-1].asString ++ "\n" ++ this.noTimeSigString ++ "\n")
     }
 
 
@@ -257,15 +272,15 @@ RhythmicCell : LilyRhythmObj {
     ////////////////////////////
 
 
-    lenghtAdd { arg thisNumber;
+    lengthAdd { arg thisNumber;
 
-        this.lenght_(this.lenght + thisNumber)
+        this.length_(this.length + thisNumber)
     }
 
 
-    lenghtMul  { arg thisNumber;
+    lengthMul  { arg thisNumber;
 
-        this.lenght_(this.lenght * thisNumber)
+        this.length_(this.length * thisNumber)
     }
 
 
