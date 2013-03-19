@@ -8,10 +8,10 @@ RhythmicGroup : LilyShowableObj {
 
 		^super.new.initRhythmicGroup(stuffIn);
 	}
-	
+
 
 	initRhythmicGroup { arg stuffIn=nil;
-		
+
 		if(stuffIn.notNil, {
 			this.put(stuffIn)
 		});
@@ -19,33 +19,33 @@ RhythmicGroup : LilyShowableObj {
 
 
 	put { arg stuffIn;
-	
+
 		case
-		{stuffIn.isKindOf(RhythmicSeq)}	
+		{stuffIn.isKindOf(RhythmicSeq)}
 		{voiceArray = voiceArray.add(stuffIn)}
 
 		{stuffIn.isKindOf(Array)}
 		{ this.putArray(stuffIn)};
-	
+
 	}
 
 
 	putArray { arg thisArray;
 
 		thisArray.do { |i|
-			
+
 			case
-			{i.isKindOf(RhythmicSeq)}	
+			{i.isKindOf(RhythmicSeq)}
 			{this.put(i)}
-			
-			{i.isKIndOf(Array)}	
+
+			{i.isKindOf(Array)}
 			{this.put(i.asRS)};
 		}
 	}
 
 
 	string {
-	
+
 		var outString = String.new;
 
 		this.voiceArray.do { |i|
@@ -56,7 +56,7 @@ RhythmicGroup : LilyShowableObj {
 
 
 	musicString {
-	
+
 		var outString = String.new;
 
 		outString = outString ++ "\\score {\n\t<<\n\t\t";
@@ -64,7 +64,7 @@ RhythmicGroup : LilyShowableObj {
 		//	outString = outString ++ "\n \\midi { } \n\t \\layout { }\n";
 		outString = outString ++ "\n  >> \n}\n\n";
 		^outString
-	
+
 	}
 
 }
