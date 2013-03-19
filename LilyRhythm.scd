@@ -1,4 +1,7 @@
-
+/*
+LilyShowableObj.lilyCmd = "~/bin/lilypond".standardizePath   // where to find the lilypond executable
+LilyShowableObj.outputDirectory = "~/Desktop/prefix".standardizePath
+*/
 a = RhythmicCell([3, [[2, [1, 1, 1, 1, 1, 1]], 1, 4, 2]] )
 b = RhythmicCell([3, [2, [2, [1, 1, 1]], 2, 1]] )
 a.reshapeLike(b).plot
@@ -28,7 +31,7 @@ b = a.asPitchSeq(40, -10)
 b.plot
 
 f={ |allowedDurs, n, thisSum|
-	
+
 	all {:x,
 		x <- allowedDurs.dup(n).allTuples,
 		x.sum==thisSum;
@@ -44,13 +47,13 @@ x.edit
 a = [
 	[3, [1, [2, [1, 1, [1, [1, 1, 1]], 1, 1, 1]], 1, 4, 2]],
 	[4, [2, [2, [1, 1, 1, 1, 1, 1]], 1, 4, 2]],
-	[2.5, [[2, [1, 1, 1, 1, 1, 1]], 1, 4, 2]],	
+	[2.5, [[2, [1, 1, 1, 1, 1, 1]], 1, 4, 2]],
 	[5, [4, [2, [1, 1, 1, 1, 1, 1]], 1, 4, 2]],
 	[6, [4, [2, [1, 1]], 1, 4, 2]],
 	[3, [4, [2, [1, 1, 1]], 1, 4, 2]],
 	[8, [4, [2, [1, 1, 1, 1, 1]], 1, 3, 3]],
 	[4, [4, [2, [1, 1, 1, 1, 1, 1, 1]], 2, 4, 1]]
-];	
+];
 
 a.scramble.asRS
 
@@ -105,7 +108,7 @@ a.lenght
 a.struct
 a.heads
 a.heads.sum
-a.factor 
+a.factor
 a.tuplet
 a = [2, [1, 1, 1, 1, 1, 1, 1, 2, 1]].asRC
 a.hasTuplet

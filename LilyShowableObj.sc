@@ -1,23 +1,26 @@
 
 LilyShowableObj : LilyObj {
 
-    var <>fileName = "~/Desktop/sketch"; 
-	var <>pdfViewer = "xpdf -remote sclyserver";
-	var <>midiPlayer = "vlc"; 
-	var <>textEditor = "frescobaldi"; 
-	var <>template = "doc"; 
-	var <>lilyCmd= "lilypond";
-	var <>templatesFolder;
+    classvar <>fileName = "~/Desktop/sketch";
+	classvar <>pdfViewer = "open";
+	classvar <>midiPlayer = "vlc";
+	classvar <>textEditor = "frescobaldi";
+	classvar <>template = "doc";
+	classvar <>lilyCmd= "lilypond";
+	classvar <>templatesFolder;
 
-
-    *new {
-        ^super.new.initShowableObj;
-    }
-
-	initShowableObj {
-		templatesFolder = Platform.userExtensionDir ++ "/LilyCollider/templates";   
-
+	*initClass {
+		Class.initClass(Platform);
+		templatesFolder = Platform.userExtensionDir ++ "/LilyCollider/templates";
 	}
+
+//    *new {
+//        ^super.new.initShowableObj;
+//    }
+
+//	initShowableObj {
+//		LilyShowableObj.templatesFolder = Platform.userExtensionDir ++ "/LilyCollider/templates";
+//	}
 
     /* Music expression between curly brackets */
     musicString {
@@ -27,15 +30,15 @@ LilyShowableObj : LilyObj {
 
 
     /* Path of the choosen template LilyPond file */
-    templateFile {
-        ^(this.templatesFolder ++ "/" ++ this.template ++ ".ly").standardizePath
+    *templateFile {
+        ^(LilyShowableObj.templatesFolder ++ "/" ++ LilyShowableObj.template ++ ".ly").standardizePath
     }
 
 
     header {
         var file, content;
 
-        file = File(this.templateFile,"r");
+        file = File(LilyShowableObj.templateFile,"r");
         content = file.readAllString;
         file.close;
         ^content;
@@ -46,7 +49,7 @@ LilyShowableObj : LilyObj {
     write {
         var file;
 
-        file = File(this.fileName.standardizePath ++ ".ly","w");
+        file = File(LilyShowableObj.fileName.standardizePath ++ ".ly","w");
         file.write(this.header);
         file.write(this.musicString);
         file.close;
@@ -63,17 +66,17 @@ LilyShowableObj : LilyObj {
     /* Array of the available LilyPond templates Names */
     templateList {
 
-        ^(this.templatePathList.collect {|i| i.basename})
+        ^(LilyShowableObj.templatePathList.collect {|i| i.basename})
 
     }
 
 
     /* Call the PDF Viewer to show the produced PDF File: */
-    show { (this.pdfViewer ++ " " ++ this.fileName.standardizePath ++ ".pdf" ).unixCmd }
+    show { (LilyShowableObj.pdfViewer ++ " " ++ LilyShowableObj.fileName.standardizePath ++ ".pdf" ).unixCmd }
 
 
     /* Call the MIDI player program */
-    playMidi { ( this.midiPlayer ++ " " ++ this.fileName.standardizePath ++ ".midi" ).unixCmd }
+    playMidi { ( LilyShowableObj.midiPlayer ++ " " ++ LilyShowableObj.fileName.standardizePath ++ ".midi" ).unixCmd }
 
 
     /* Produce the score with LilyPond, when it's done open with the PDF viewer */
@@ -83,8 +86,8 @@ LilyShowableObj : LilyObj {
             this.write;
             0.1.wait;
             (
-		this.lilyCmd ++ " -o " ++ this.fileName.standardizePath ++ " " ++
-		this.fileName.standardizePath ++ ".ly"
+		LilyShowableObj.lilyCmd ++ " -o " ++ LilyShowableObj.fileName.standardizePath ++ " " ++
+		LilyShowableObj.fileName.standardizePath ++ ".ly"
             ).unixCmd { this.show };
         }
     }
@@ -93,7 +96,7 @@ LilyShowableObj : LilyObj {
     /* Call the text editor to open the .ly file */
     edit {
         this.write;
-        (this.textEditor ++ " " ++ this.fileName.standardizePath ++ ".ly").unixCmd;
+        (LilyShowableObj.textEditor ++ " " ++ LilyShowableObj.fileName.standardizePath ++ ".ly").unixCmd;
     }
 
 }
