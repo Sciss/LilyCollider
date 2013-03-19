@@ -119,20 +119,16 @@ RhythmicCell : LilyRhythmObj {
 
 
     adjustedHeads {
-
         ^this.heads * this.factor
     }
 
 
     numer {
-
 		^(this.adjustedHeads.abs.sum / gcd((length * 8).asInteger, this.adjustedHeads.abs.sum.asInteger))
-
     }
 
 
     denom {
-
         var thisDenom;
 
         thisDenom = (length * 8) / gcd((length * 8).asInteger, this.adjustedHeads.abs.sum.asInteger);
@@ -147,24 +143,27 @@ RhythmicCell : LilyRhythmObj {
     }
 
 
-    hasTuplet {
-
-        ^(this.numer == this.denom).not
+    tuplet {
+		var n, d;
+//        ^[this.numer, this.denom]
+		#n, d = (this.adjustedHeads.abs.sum/(length * 8)).asFraction;
+		while({ d * 2 < n }, { d = d * 2 });
+		^[n, d];
     }
 
 
-    tuplet {
-
-        ^[this.numer, this.denom]
+    hasTuplet {
+		var n, d;
+		#n, d = this.tuplet;
+		^(n != d);
     }
 
 
     tupletString {
-
+		var n, d;
         if(this.hasTuplet, {
-            ^(  "\\times " ++ this.denom.asString ++
-                "/" ++ this.numer.asString ++ " "
-            )
+			#n, d = this.tuplet;
+			^("\\times " ++ d.asString ++ "/" ++ n.asString ++ " ")
         });
     }
 
@@ -228,7 +227,7 @@ RhythmicCell : LilyRhythmObj {
                 {
 						isPause = thisItem < 0;
 						stringOut = stringOut ++ isPause.if("r", "c'") ++
-						  durationDict.findKeyForValue(thisItem.abs) ++ "  "
+						  this.findKeyForValue(thisItem.abs) ++ "  "
 				}
 
                 {thisItem.isArray}
@@ -254,8 +253,11 @@ RhythmicCell : LilyRhythmObj {
 
 
     string {
-
-        ^("\\time " ++ measureScaleLily[(this.length*2)-1].asString ++ "\n" ++ this.noTimeSigString ++ "\n")
+		var m;
+//		m = measureScaleLily[(this.length*2)-1].asString;
+		m = (this.length/8).asFraction;
+		m = m[0].asString ++ "/" ++ m[1].asString;
+        ^("\\time " ++ m ++ "\n" ++ this.noTimeSigString ++ "\n")
     }
 
 
