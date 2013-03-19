@@ -1,0 +1,3 @@
+#!/bin/sh
+cd /Applications/LilyPond.app/Contents/Resources/
+./bin/lilypond "$@"
