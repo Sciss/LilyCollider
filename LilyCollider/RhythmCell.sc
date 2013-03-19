@@ -1,19 +1,16 @@
 
 RhythmicCell : LilyRhythmObj {
 
-
     var <>struct, <>length;
     var <>template = "rhythmic";
 
 
     *new { arg thisCell;
-
         ^super.new.initRhythmCell(thisCell);
     }
 
 
     initRhythmCell { arg thisCell;
-
         this.length_(thisCell[0]);
         this.struct_(thisCell[1]);
     }
@@ -21,38 +18,42 @@ RhythmicCell : LilyRhythmObj {
 
 
     heads {
-
         ^this.getHeads(struct);
     }
 
 
     lyHeads {
-
         ^this.heads.collect({|i|
 			this.findKeyForValue(i)
         })
-
     }
 
 	findKeyForValue { arg i;
-		var isPause, key;
+		var isPause, key, split;
+		if (i > 96) { ("Rhythmic value " ++ i.asString ++ " exceeds 96").error };
 		key = durationDict.findKeyForValue(i.abs);
+		if (key.isNil) {
+			// e.g. 13 = 8 + 4 + 1
+			split = i.abs.asBinaryDigits.reverse.collect({|d, i| (1 << i) * d }).reverse.reject(_ == 0);
+			split = split.collect { |i| durationDict.findKeyForValue(i) };
+			key   = "";
+			split.do { |d, i|
+				if (i > 0) { key = key ++ "~" };
+				key = key ++ d;
+			};
+		};
 		isPause = i < 0;
 		^isPause.if({ "-" ++ key }, key);
 	}
 
     subHeads {
-
         ^this.heads.collect({|i|
-
             i / 8.0
         })
-
     }
 
 
     adjustedStruct {
-
         ^struct.collect({|i,j|
 
             case
@@ -68,7 +69,6 @@ RhythmicCell : LilyRhythmObj {
 
 
     adjustedLyStruct {
-
         ^this.adjustedStruct.deepCollect(
             this.adjustedStruct.rank,
             {|i|
@@ -84,7 +84,6 @@ RhythmicCell : LilyRhythmObj {
 
 
     getHead { arg thisItem;
-
         case
         {thisItem.isKindOf(Number)}
         {^thisItem}
@@ -95,7 +94,6 @@ RhythmicCell : LilyRhythmObj {
 
 
     getHeads { arg thisList;
-
         ^thisList.collect({ arg item;
             this.getHead(item)
         })
@@ -103,7 +101,6 @@ RhythmicCell : LilyRhythmObj {
 
 
     factor {
-
         var thisFactor, adjustedSum;
 
         thisFactor = 1;
@@ -173,38 +170,34 @@ RhythmicCell : LilyRhythmObj {
         var levelString = String.new;
         var stringOut = String.new;
 
-
         thisLevel.do { levelString = levelString ++ "\t"};
-
 
         this.hasTuplet.if({
             stringOut = levelString ++ this.tupletString ++ "{ \n" ++ levelString ++ "\t";
         });
 
-
         thisTree.do { arg thisNumber;
 			str = thisNumber.asString;
 			isPause = str[0] == $-;
-			if (isPause) {
-				stringOut = stringOut ++ "r" ++ str.drop(1) ++ "  "
-			} {
-				stringOut = stringOut ++ "c'" ++ str ++ "  "
-			}
+			if (isPause) { str = str.drop(1) };
+			str = str.split($~);
+			str.do { |d, i|
+				if (i > 0) { stringOut = stringOut ++ " ~ " };
+				stringOut = stringOut ++ isPause.if("r", "c'") ++ d;
+			};
+			stringOut = stringOut ++ "  ";
         };
-
 
         this.hasTuplet.if({
             stringOut = stringOut ++ "\n" ++ levelString ++ "}"
         });
 
-
         ^stringOut;
-
     }
 
 
     noTimeSigString { arg thisLevel =1;
-		var isPause;
+		var isPause, str;
         var stringOut = String.new;
         var levelString = String.new;
 
@@ -226,8 +219,13 @@ RhythmicCell : LilyRhythmObj {
                 {thisItem.isNumber}
                 {
 						isPause = thisItem < 0;
-						stringOut = stringOut ++ isPause.if("r", "c'") ++
-						  this.findKeyForValue(thisItem.abs) ++ "  "
+						str     = this.findKeyForValue(thisItem.abs);
+						str     = str.split($~);
+						str.do { |d, i|
+							if (i > 0) { stringOut = stringOut ++ " ~ " };
+							stringOut = stringOut ++ isPause.if("r", "c'") ++ d;
+						};
+						stringOut = stringOut ++ "  ";
 				}
 
                 {thisItem.isArray}
@@ -275,20 +273,17 @@ RhythmicCell : LilyRhythmObj {
 
 
     lengthAdd { arg thisNumber;
-
         this.length_(this.length + thisNumber)
     }
 
 
     lengthMul  { arg thisNumber;
-
         this.length_(this.length * thisNumber)
     }
 
 
     // substitute an element:
     subst { arg thisIndex, thisItem;
-
         this.struct_(this.struct.put(thisIndex, thisItem))
     }
 

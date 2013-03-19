@@ -88,7 +88,13 @@ LilyShowableObj : LilyObj {
             (
 		LilyShowableObj.lilyCmd ++ " -o " ++ LilyShowableObj.fileName.standardizePath ++ " " ++
 		LilyShowableObj.fileName.standardizePath ++ ".ly"
-            ).unixCmd { this.show };
+            ).unixCmd { |res|
+				if (res == 127) {
+					"LilyPond failed with result 127. Make sure LilyShowableObj.lilyCmd is corret.".warn;
+				} {
+					this.show;
+				};
+			};
         }
     }
 
