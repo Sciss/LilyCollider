@@ -27,6 +27,6 @@ For example:
     [a, b].asRhythmicSeq.plot;
 ```
 
-Cell `a` has length 2/8, while cell `b` has length 2/(3*8) = 1/12. In cell `a`, the element 5 is split into 4 + 1 which are tied. In cell `b`, the negative element is intepreted as a pause lasting for 1 unit.
+Cell `a` has length 2/8, while cell `b` has length 2/(3*8) = 1/12. In cell `a`, the element `5` is split into 4 + 1 which are tied. In cell `b`, the negative element `-1` is interpreted as a pause lasting for 1 unit.
 
 ![illustration](rhythm_cell_example.png)
