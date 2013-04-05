@@ -30,7 +30,7 @@ RhythmicCell : LilyRhythmObj {
 
 	findKeyForValue { arg i;
 		var isPause, key, split;
-		if (i > 96) { ("Rhythmic value " ++ i.asString ++ " exceeds 96").error };
+		if (i > 96) { Error("Rhythmic xvalue " ++ i.asString ++ " exceeds 96").throw };
 		key = durationDict.findKeyForValue(i.abs);
 		if (key.isNil) {
 			// e.g. 13 = 8 + 4 + 1
