@@ -17,7 +17,7 @@
     indent = #0
    ragged-right = ##t
 
-    \context { \Score0
+    \context { \Score
         % tuplet handling
         tupletFullLength = ##t
         \override TupletBracket #'bracket-visibility = ##t

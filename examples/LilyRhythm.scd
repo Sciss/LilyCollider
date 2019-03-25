@@ -1,6 +1,6 @@
 /*
 LilyShowableObj.lilyCmd = "~/bin/lilypond".standardizePath   // where to find the lilypond executable
-LilyShowableObj.outputDirectory = "~/Desktop/prefix".standardizePath
+LilyShowableObj.fileName = "~/Desktop/prefix".standardizePath
 */
 a = RhythmicCell([3, [[2, [1, 1, 1, 1, 1, 1]], 1, 4, 2]] )
 b = RhythmicCell([3, [2, [2, [1, 1, 1]], 2, 1]] )
